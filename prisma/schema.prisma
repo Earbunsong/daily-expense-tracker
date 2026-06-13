@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  expenses     Expense[]
+  budgets      Budget[]
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  icon     String?
+  expenses Expense[]
+}
+
+model Expense {
+  id         String   @id @default(uuid())
+  userId     String
+  categoryId Int
+  amount     Decimal  @db.Decimal(14, 2)
+  currency   String   @default("USD")
+  note       String?
+  spentAt    DateTime @db.Date
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model Budget {
+  id        String   @id @default(uuid())
+  userId    String
+  month     DateTime @db.Date
+  amount    Decimal  @db.Decimal(14, 2)
+  currency  String   @default("USD")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, month, currency])
+}
