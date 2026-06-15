@@ -20,6 +20,11 @@ export const expenseSchema = z.object({
   note: z.string().max(255).optional(),
 });
 
+export const categorySchema = z.object({
+  name: z.string().min(1, "Name is required").max(50),
+  icon: z.string().max(10).optional(),
+});
+
 export const budgetSchema = z.object({
   month: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
   amount: z.number().positive("Amount must be positive"),
@@ -30,3 +35,4 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ExpenseInput = z.infer<typeof expenseSchema>;
 export type BudgetInput = z.infer<typeof budgetSchema>;
+export type CategoryInput = z.infer<typeof categorySchema>;
