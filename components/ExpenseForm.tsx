@@ -41,10 +41,25 @@ export default function ExpenseForm({ categories, expenseId, initial }: Props) {
     setError("");
     setLoading(true);
 
+    const parsedAmount = parseFloat(amount);
+    const parsedCategoryId = parseInt(categoryId);
+
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      setError("Please enter a valid amount");
+      setLoading(false);
+      return;
+    }
+
+    if (isNaN(parsedCategoryId)) {
+      setError("Please select a category");
+      setLoading(false);
+      return;
+    }
+
     const body = {
-      amount: parseFloat(amount),
+      amount: parsedAmount,
       currency,
-      categoryId: parseInt(categoryId),
+      categoryId: parsedCategoryId,
       spentAt,
       note: note || undefined,
     };
