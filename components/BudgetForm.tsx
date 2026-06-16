@@ -133,8 +133,8 @@ export default function BudgetForm({ currentMonth, existing }: Props) {
           <input
             type="number"
             required
-            min="1"
-            step={currency === "KHR" ? "1000" : "0.01"}
+            min={currency === "KHR" ? "100" : "0.01"}
+            step={currency === "KHR" ? "1" : "0.01"}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             className="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition shadow-sm"

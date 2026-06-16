@@ -141,7 +141,7 @@ export default function ExpenseForm({ categories, expenseId, initial }: Props) {
       {/* Category */}
       <div className="space-y-1.5">
         <label className="block text-sm font-semibold text-slate-700">Category</label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {categories.map((c) => (
             <button
               key={c.id}

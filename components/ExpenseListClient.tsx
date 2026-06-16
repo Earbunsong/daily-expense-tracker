@@ -64,21 +64,21 @@ export default function ExpenseListClient({ expenses, categories, filters }: Pro
       {/* Filter card */}
       <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Filters</p>
-        <div className="flex flex-wrap gap-3 items-end">
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-end">
           <div className="space-y-1">
             <label className="block text-xs font-medium text-slate-500">From</label>
             <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
-              className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
           </div>
           <div className="space-y-1">
             <label className="block text-xs font-medium text-slate-500">To</label>
             <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
-              className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
           </div>
           <div className="space-y-1">
             <label className="block text-xs font-medium text-slate-500">Currency</label>
             <select value={currency} onChange={(e) => setCurrency(e.target.value)}
-              className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
               <option value="">All</option>
               {CURRENCIES.map((c) => (
                 <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
@@ -88,21 +88,21 @@ export default function ExpenseListClient({ expenses, categories, filters }: Pro
           <div className="space-y-1">
             <label className="block text-xs font-medium text-slate-500">Category</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)}
-              className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
               <option value="">All categories</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
               ))}
             </select>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 col-span-2 sm:col-span-1">
             <button onClick={applyFilters}
-              className="bg-indigo-600 text-white text-sm px-4 py-2 rounded-xl hover:bg-indigo-700 transition font-medium">
+              className="flex-1 sm:flex-none bg-indigo-600 text-white text-sm px-4 py-2 rounded-xl hover:bg-indigo-700 transition font-medium">
               Apply
             </button>
             {(from || to || category || currency) && (
               <button onClick={clearFilters}
-                className="bg-slate-100 text-slate-600 text-sm px-4 py-2 rounded-xl hover:bg-slate-200 transition font-medium">
+                className="flex-1 sm:flex-none bg-slate-100 text-slate-600 text-sm px-4 py-2 rounded-xl hover:bg-slate-200 transition font-medium">
                 Clear
               </button>
             )}
@@ -143,18 +143,18 @@ export default function ExpenseListClient({ expenses, categories, filters }: Pro
         ) : (
           <ul className="divide-y divide-slate-50">
             {expenses.map((e) => (
-              <li key={e.id} className="flex items-center justify-between px-5 py-4 hover:bg-slate-50/60 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
+              <li key={e.id} className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4 hover:bg-slate-50/60 transition-colors">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
                     {e.category.icon}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-slate-800">{e.category.name}</p>
-                    {e.note && <p className="text-xs text-slate-400 truncate max-w-xs mt-0.5">{e.note}</p>}
+                    {e.note && <p className="text-xs text-slate-400 truncate max-w-[120px] sm:max-w-xs mt-0.5">{e.note}</p>}
                     <p className="text-xs text-slate-400 mt-0.5">{e.spentAt}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                   <div className="text-right">
                     <p className="text-sm font-bold text-slate-900">
                       {formatCurrency(e.amount, e.currency as Currency)}
