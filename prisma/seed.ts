@@ -18,7 +18,7 @@ async function main() {
     { name: "Bills", icon: "📄" },
     { name: "Health", icon: "💊" },
     { name: "Other", icon: "📦" },
-    { name: "Cafe", icon: "📦" },
+    { name: "Cafe", icon: "☕" },
   ];
 
   for (const cat of categories) {

@@ -46,17 +46,24 @@ export default async function DashboardPage() {
   const weekTotal = { USD: sumByCurrency(weekExp, "USD"), KHR: sumByCurrency(weekExp, "KHR") };
   const monthTotal = { USD: sumByCurrency(monthExpenses, "USD"), KHR: sumByCurrency(monthExpenses, "KHR") };
 
-  // Charts — use USD if available, else KHR
-  const chartCurrency: Currency = monthTotal.USD > 0 ? "USD" : "KHR";
-  const chartExpenses = (monthExpenses as ExpenseWithCategory[]).filter((e) => e.currency === chartCurrency);
-
-  const byCategoryMap: Record<string, { name: string; icon: string; value: number }> = {};
-  for (const e of chartExpenses) {
-    const k = e.category.name;
-    if (!byCategoryMap[k]) byCategoryMap[k] = { name: k, icon: e.category.icon ?? "", value: 0 };
-    byCategoryMap[k].value += Number(e.amount);
+  function buildByCategory(expenses: ExpenseWithCategory[]) {
+    const map: Record<string, { name: string; icon: string; value: number }> = {};
+    for (const e of expenses) {
+      const k = e.category.name;
+      if (!map[k]) map[k] = { name: k, icon: e.category.icon ?? "", value: 0 };
+      map[k].value += Number(e.amount);
+    }
+    return Object.values(map);
   }
-  const byCategory = Object.values(byCategoryMap);
+
+  const usdExpenses = (monthExpenses as ExpenseWithCategory[]).filter((e) => e.currency === "USD");
+  const khrExpenses = (monthExpenses as ExpenseWithCategory[]).filter((e) => e.currency === "KHR");
+  const byCategoryUSD = buildByCategory(usdExpenses);
+  const byCategoryKHR = buildByCategory(khrExpenses);
+
+  // Daily spending chart: prefer USD; fall back to KHR
+  const chartCurrency: Currency = monthTotal.USD > 0 ? "USD" : "KHR";
+  const chartExpenses = monthTotal.USD > 0 ? usdExpenses : khrExpenses;
 
   const byDayMap: Record<string, { date: string; total: number }> = {};
   for (const e of chartExpenses) {
@@ -105,9 +112,27 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-2 mb-5">
             <span className="text-base">🥧</span>
             <h2 className="text-sm font-semibold text-slate-700">Spending by category</h2>
-            <span className="ml-auto text-xs text-slate-400">{chartCurrency} · this month</span>
+            <span className="ml-auto text-xs text-slate-400">this month</span>
           </div>
-          <CategoryPieChart data={byCategory} />
+          {byCategoryUSD.length > 0 && (
+            <div className={byCategoryKHR.length > 0 ? "mb-4" : ""}>
+              {byCategoryKHR.length > 0 && (
+                <p className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">🇺🇸 USD</p>
+              )}
+              <CategoryPieChart data={byCategoryUSD} currency="USD" />
+            </div>
+          )}
+          {byCategoryKHR.length > 0 && (
+            <div>
+              {byCategoryUSD.length > 0 && (
+                <p className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">🇰🇭 KHR</p>
+              )}
+              <CategoryPieChart data={byCategoryKHR} currency="KHR" />
+            </div>
+          )}
+          {byCategoryUSD.length === 0 && byCategoryKHR.length === 0 && (
+            <CategoryPieChart data={[]} currency="USD" />
+          )}
         </div>
         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-5">
@@ -148,7 +173,7 @@ export default async function DashboardPage() {
               <li key={e.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-slate-50/60 transition-colors">
                 <div className="flex items-center gap-3.5">
                   <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-base flex-shrink-0">
-                    {e.category.icon}
+                    {e.category.icon ?? "📦"}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-slate-800">{e.category.name}</p>

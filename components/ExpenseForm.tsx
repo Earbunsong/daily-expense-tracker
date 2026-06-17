@@ -153,7 +153,7 @@ export default function ExpenseForm({ categories, expenseId, initial }: Props) {
                   : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
               }`}
             >
-              <span className="text-xl">{c.icon}</span>
+              <span className="text-xl">{c.icon ?? "📦"}</span>
               {c.name}
             </button>
           ))}

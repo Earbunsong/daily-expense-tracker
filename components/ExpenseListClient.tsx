@@ -146,7 +146,7 @@ export default function ExpenseListClient({ expenses, categories, filters }: Pro
               <li key={e.id} className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4 hover:bg-slate-50/60 transition-colors">
                 <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
-                    {e.category.icon}
+                    {e.category.icon ?? "📦"}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-slate-800">{e.category.name}</p>
