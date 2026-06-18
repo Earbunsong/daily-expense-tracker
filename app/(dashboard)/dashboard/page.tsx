@@ -61,17 +61,18 @@ export default async function DashboardPage() {
   const byCategoryUSD = buildByCategory(usdExpenses);
   const byCategoryKHR = buildByCategory(khrExpenses);
 
-  // Daily spending chart: prefer USD; fall back to KHR
-  const chartCurrency: Currency = monthTotal.USD > 0 ? "USD" : "KHR";
-  const chartExpenses = monthTotal.USD > 0 ? usdExpenses : khrExpenses;
-
-  const byDayMap: Record<string, { date: string; total: number }> = {};
-  for (const e of chartExpenses) {
-    const k = e.spentAt.toISOString().slice(0, 10);
-    if (!byDayMap[k]) byDayMap[k] = { date: k, total: 0 };
-    byDayMap[k].total += Number(e.amount);
+  function buildByDay(expenses: ExpenseWithCategory[]) {
+    const map: Record<string, { date: string; total: number }> = {};
+    for (const e of expenses) {
+      const k = e.spentAt.toISOString().slice(0, 10);
+      if (!map[k]) map[k] = { date: k, total: 0 };
+      map[k].total += Number(e.amount);
+    }
+    return Object.values(map);
   }
-  const byDay = Object.values(byDayMap);
+
+  const byDayUSD = buildByDay(usdExpenses);
+  const byDayKHR = buildByDay(khrExpenses);
 
   // Budget progress bars
   const budgetStats = budgets
@@ -137,10 +138,28 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-5">
             <span className="text-base">📈</span>
-            <h2 className="text-sm font-semibold text-slate-700">Daily spending</h2>
-            <span className="ml-auto text-xs text-slate-400">{chartCurrency} · this month</span>
+            <h2 className="text-sm font-semibold text-slate-700">Daily spending · ចំណាយប្រចាំថ្ងៃ</h2>
+            <span className="ml-auto text-xs text-slate-400">this month</span>
           </div>
-          <SpendingChart data={byDay} />
+          {byDayUSD.length > 0 && (
+            <div className={byDayKHR.length > 0 ? "mb-4" : ""}>
+              {byDayKHR.length > 0 && (
+                <p className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">🇺🇸 USD · ដុល្លារ</p>
+              )}
+              <SpendingChart data={byDayUSD} currency="USD" />
+            </div>
+          )}
+          {byDayKHR.length > 0 && (
+            <div>
+              {byDayUSD.length > 0 && (
+                <p className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">🇰🇭 KHR · រៀល</p>
+              )}
+              <SpendingChart data={byDayKHR} currency="KHR" />
+            </div>
+          )}
+          {byDayUSD.length === 0 && byDayKHR.length === 0 && (
+            <SpendingChart data={[]} currency="USD" />
+          )}
         </div>
       </div>
 
